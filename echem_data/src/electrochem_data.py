@@ -74,20 +74,20 @@ class EChemDataFile(DataFile, ABC):
                   'EC-Lab': 'ECLabFile',
                   'Greenlight': 'GreenlightFile'}
 
-    def __new__(cls, path, file_type):
+    def __new__(cls, path, file_type, codec=None):
         if file_type in cls.FILE_TYPES:
             return super(EChemDataFile, cls)\
                 .__new__(eval(cls.FILE_TYPES[file_type]))
         else:
             raise NotImplementedError
 
-    def __init__(self, path, file_type):
+    def __init__(self, path, file_type, codec=None):
         """
         Initialize DTAFile object by reading in a the .DTA file and storing
         corresponding members
         """
         self.variable = None
-        super().__init__(path)
+        super().__init__(path, codec)
 
     @abstractmethod
     def read(self, path):
@@ -119,16 +119,13 @@ class DTAFile(EChemDataFile):
              'T': 'Time'}
     DELIMITER = '\t'
     DECIMAL = ','
-    if self.codec is None:
-        CODEC = 'utf-8'
-    else:
-        CODEC = self.codec
+    CODEC = 'utf-8'
 
     def read(self, path):
         """
         Read in DTA-file and return list of lines
         """
-        lines = self.read_as_list(path, self.CODEC)
+        lines = self.read_as_list(path, self.codec)
         header, header_length = self.read_header(lines)
         data = pd.read_csv(path, header=[header_length, header_length+1],
                            delimiter=self.DELIMITER, decimal=self.DECIMAL)
@@ -182,16 +179,14 @@ class ECLabFile(EChemDataFile):
              'time': 'Time'}
     DELIMITER = '\t'
     DECIMAL = ','
-    if self.codec is None:
-        CODEC = 'latin-1'
-    else:
-        CODEC = self.codec
+    CODEC = 'latin-1'
 
     def read(self, path):
         """
         Read in EC-Lab-file and return list of lines
         """
-        lines = self.read_as_list(path, self.CODEC)
+        codec = self.CODEC if self.codec is None else self.codec
+        lines = self.read_as_list(path, codec)
         header, header_length = self.read_header(lines)
         data = pd.read_csv(path, header=header_length,
                            delimiter=self.DELIMITER, decimal=self.DECIMAL)
@@ -255,10 +250,8 @@ class InfoFile(DataFile):
     HEADER_ENDING = 'TABLE'
     DELIMITER = '\t'
     DECIMAL = '.'
-    if self.codec is None:
-        CODEC = 'utf-8'
-    else:
-        CODEC = self.codec
+    CODEC = 'utf-8'
+
     def __init__(self, path, names=None):
         super().__init__(path)
         if isinstance(names, (list, tuple)):
@@ -270,7 +263,8 @@ class InfoFile(DataFile):
         """
         Read in DTA-file and return list of lines
         """
-        lines = self.read_as_list(path)
+        codec = self.CODEC if self.codec is None else self.codec
+        lines = self.read_as_list(path, codec)
         header, header_length = self.read_header(lines)
         try:
             data = pd.read_csv(path, delimiter=self.DELIMITER,
@@ -337,16 +331,14 @@ class GreenlightFile(EChemDataFile):
     NAMES = {}
     DELIMITER = ','
     DECIMAL = '.'
-    if self.codec is None:
-        CODEC = 'latin-1'
-    else:
-        CODEC = self.codec
+    CODEC = 'latin-1'
 
     def read(self, path):
         """
         Read in DTA-file and return list of lines
         """
-        lines = self.read_as_list(path, self.CODEC)
+        codec = self.CODEC if self.codec is None else self.codec
+        lines = self.read_as_list(path, codec)
         header, header_length = self.read_header(lines)
         data = pd.read_csv(path, header=[16, 17],
                            delimiter=self.DELIMITER, decimal=self.DECIMAL,
