@@ -125,10 +125,12 @@ class DTAFile(EChemDataFile):
         """
         Read in DTA-file and return list of lines
         """
-        lines = self.read_as_list(path, self.codec)
+        codec = self.CODEC if self.codec is None else self.codec
+        lines = self.read_as_list(path, codec)
         header, header_length = self.read_header(lines)
         data = pd.read_csv(path, header=[header_length, header_length+1],
-                           delimiter=self.DELIMITER, decimal=self.DECIMAL)
+                           delimiter=self.DELIMITER, decimal=self.DECIMAL,
+                           encoding=codec)
         data.drop(data.columns[[0, 1]], axis=1, inplace=True)
         data.rename(columns=self.NAMES, inplace=True)
         columns = []
@@ -188,7 +190,7 @@ class ECLabFile(EChemDataFile):
         codec = self.CODEC if self.codec is None else self.codec
         lines = self.read_as_list(path, codec)
         header, header_length = self.read_header(lines)
-        data = pd.read_csv(path, header=header_length,
+        data = pd.read_csv(path, header=header_length, encoding=codec,
                            delimiter=self.DELIMITER, decimal=self.DECIMAL)
         names = []
         units = {}
@@ -268,7 +270,7 @@ class InfoFile(DataFile):
         header, header_length = self.read_header(lines)
         try:
             data = pd.read_csv(path, delimiter=self.DELIMITER,
-                               decimal=self.DECIMAL)
+                               decimal=self.DECIMAL, encoding=codec)
         except Exception:
             data = None
         else:
@@ -343,7 +345,7 @@ class GreenlightFile(EChemDataFile):
         data = pd.read_csv(path, header=[16, 17],
                            delimiter=self.DELIMITER, decimal=self.DECIMAL,
                            # skiprows=[13, 14],
-                           encoding=self.CODEC)
+                           encoding=codec)
         header['File Mark'] = data.iloc[0, 2]
         data.drop(data.columns[[2]], axis=1, inplace=True)
         data.rename(columns=self.NAMES, inplace=True)
