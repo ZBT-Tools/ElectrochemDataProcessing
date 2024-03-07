@@ -15,17 +15,18 @@ class DataFile(ABC):
     """
     Base class to process data files
     """
-    def __init__(self, path):
+    def __init__(self, path, codec=None):
         """
         Initialize DataFile object by reading the file and storing
         corresponding members
         """
+        self.codec = codec
         self.path = Path(path)
         self.file_name = os.path.split(path)[1]
         self.header, self.data, self.units = self.read(path)
 
     @staticmethod
-    def read_as_list(input_file, codec='utf-8'):
+    def read_as_list(input_file, codec=self.codec):
         """
         Read in input_file and return list of lines
         """
@@ -118,7 +119,10 @@ class DTAFile(EChemDataFile):
              'T': 'Time'}
     DELIMITER = '\t'
     DECIMAL = ','
-    CODEC = 'utf-8'
+    if self.codec is None:
+        CODEC = 'utf-8'
+    else:
+        CODEC = self.codec
 
     def read(self, path):
         """
@@ -178,7 +182,10 @@ class ECLabFile(EChemDataFile):
              'time': 'Time'}
     DELIMITER = '\t'
     DECIMAL = ','
-    CODEC = 'latin-1'
+    if self.codec is None:
+        CODEC = 'latin-1'
+    else:
+        CODEC = self.codec
 
     def read(self, path):
         """
@@ -248,8 +255,10 @@ class InfoFile(DataFile):
     HEADER_ENDING = 'TABLE'
     DELIMITER = '\t'
     DECIMAL = '.'
-    CODEC = 'utf-8'
-
+    if self.codec is None:
+        CODEC = 'utf-8'
+    else:
+        CODEC = self.codec
     def __init__(self, path, names=None):
         super().__init__(path)
         if isinstance(names, (list, tuple)):
@@ -328,7 +337,10 @@ class GreenlightFile(EChemDataFile):
     NAMES = {}
     DELIMITER = ','
     DECIMAL = '.'
-    CODEC = 'latin-1'
+    if self.codec is None:
+        CODEC = 'latin-1'
+    else:
+        CODEC = self.codec
 
     def read(self, path):
         """
