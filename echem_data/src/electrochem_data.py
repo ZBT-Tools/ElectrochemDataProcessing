@@ -118,7 +118,7 @@ class DTAFile(EChemDataFile):
              'Temp': 'Temperature',
              'T': 'Time'}
     DELIMITER = '\t'
-    DECIMAL = ','
+    DECIMAL = '.'
     CODEC = 'utf-8'
 
     def read(self, path):
