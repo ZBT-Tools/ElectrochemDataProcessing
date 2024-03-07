@@ -25,8 +25,7 @@ class DataFile(ABC):
         self.file_name = os.path.split(path)[1]
         self.header, self.data, self.units = self.read(path)
 
-    @staticmethod
-    def read_as_list(input_file, codec=self.codec):
+    def read_as_list(self, input_file, codec=self.codec):
         """
         Read in input_file and return list of lines
         """
