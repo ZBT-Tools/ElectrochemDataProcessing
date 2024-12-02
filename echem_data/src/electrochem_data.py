@@ -7,8 +7,10 @@ import os
 import re
 import pandas as pd
 import sys
+import numpy as np
 from abc import ABC, abstractmethod
 from pathlib import Path
+from collections import defaultdict
 
 
 class DataFile(ABC):
@@ -342,10 +344,18 @@ class GreenlightFile(EChemDataFile):
         codec = self.CODEC if self.codec is None else self.codec
         lines = self.read_as_list(path, codec)
         header, header_length = self.read_header(lines)
+        #types = defaultdict(lambda: float64, A="str", B="str")
+
         data = pd.read_csv(path, header=[16, 17],
                            delimiter=self.DELIMITER, decimal=self.DECIMAL,
                            # skiprows=[13, 14],
-                           encoding=codec)
+                           encoding=codec,
+                           converters={"File Mark": str, "Time Stamp": str},
+                           keep_default_na=False
+                           )
+        # for col, col_type in data.dtypes.items():
+        #     if pd.api.types.is_object_dtype(col_type):
+        #         data[col] = data[col].astype(str)
         # header['File Mark'] = data.iloc[0, 2]
         # data.drop(data.columns[[2]], axis=1, inplace=True)
         data.rename(columns=self.NAMES, inplace=True)
