@@ -346,8 +346,8 @@ class GreenlightFile(EChemDataFile):
                            delimiter=self.DELIMITER, decimal=self.DECIMAL,
                            # skiprows=[13, 14],
                            encoding=codec)
-        header['File Mark'] = data.iloc[0, 2]
-        data.drop(data.columns[[2]], axis=1, inplace=True)
+        # header['File Mark'] = data.iloc[0, 2]
+        # data.drop(data.columns[[2]], axis=1, inplace=True)
         data.rename(columns=self.NAMES, inplace=True)
         columns = []
         for index in data.columns.codes[1]:
