@@ -335,7 +335,7 @@ class GreenlightFile(EChemDataFile):
     NAMES = {}
     DELIMITER = ','
     DECIMAL = '.'
-    CODEC = 'latin-1'
+    CODEC = 'utf-8'
 
     def read(self, path):
         """
