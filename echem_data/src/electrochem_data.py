@@ -350,7 +350,6 @@ class GreenlightFile(EChemDataFile):
                            delimiter=self.DELIMITER, decimal=self.DECIMAL,
                            # skiprows=[13, 14],
                            encoding=codec,
-                           dtype=np.float64,
                            converters={"File Mark": str, "Time Stamp": str},
                            keep_default_na=False
                            )
