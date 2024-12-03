@@ -33,12 +33,14 @@ class DataFile(ABC):
         Read in input_file and return list of lines
         """
         if isinstance(input_file, (str, Path)):
-            try:
-                with open(input_file, 'r', encoding=codec) as f:
-                    input_list = f.readlines()
-            except FileNotFoundError:
-                print("File was not found: \n", input_file)
-                sys.exit()
+            # try:
+            #     with open(input_file, 'r', encoding=codec) as f:
+            #         input_list = f.readlines()
+            # except FileNotFoundError:
+            #     print("File was not found: \n", input_file)
+            #     sys.exit()
+            with open(input_file, 'r', encoding=codec) as f:
+                input_list = f.readlines()
         elif isinstance(input_file, (list, tuple)):
             input_list = input_file
         else:
